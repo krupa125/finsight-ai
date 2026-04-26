@@ -40,8 +40,9 @@ public class UserService {
     }
 
     // ✅ Get User by ID
-    public User getUserById(Long id) {
-        return userRepository.findById(id).orElse(null);
+   public User getUserById(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
     }
 
     // ✅ Update User
