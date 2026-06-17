@@ -1,11 +1,15 @@
 package com.krupa.finsightai.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
@@ -13,10 +17,14 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.krupa.finsightai.exception.ResourceNotFoundException;
 import com.krupa.finsightai.model.Role;
+import com.krupa.finsightai.model.Transaction;
+import com.krupa.finsightai.model.TransactionType;
 import com.krupa.finsightai.model.User;
 import com.krupa.finsightai.repository.TransactionRepository;
 import com.krupa.finsightai.repository.UserRepository;
@@ -376,6 +384,163 @@ void deleteUser_ShouldDeleteUserSuccessfully() {
     verify(userRepository).findById(1L);
     verify(userRepository).delete(user);
     }
+
+    @Test
+void addUser_ShouldSaveUserSuccessfully() {
+
+    User user = new User();
+    user.setUsername("newuser");
+    user.setEmail("new@test.com");
+    user.setPassword("password");
+
+    when(userRepository.existsByUsername("newuser"))
+            .thenReturn(false);
+
+    when(userRepository.existsByEmail("new@test.com"))
+            .thenReturn(false);
+
+    when(passwordEncoder.encode("password"))
+            .thenReturn("encodedPassword");
+
+    when(userRepository.save(any(User.class)))
+            .thenAnswer(invocation -> invocation.getArgument(0));
+
+    User result = userService.addUser(user);
+
+    assertNotNull(result);
+    assertEquals(Role.USER, result.getRole());
+    assertEquals("encodedPassword", result.getPassword());
+
+    verify(userRepository).save(any(User.class));
+}
+
+@Test
+void getAllUsers_ShouldReturnAllUsers() {
+
+    List<User> users = List.of(
+            new User(),
+            new User()
+    );
+
+    when(userRepository.findAll())
+            .thenReturn(users);
+
+    List<User> result =
+            userService.getAllUsers();
+
+    assertEquals(2, result.size());
+
+    verify(userRepository).findAll();
+}
+
+@Test
+void transferMoneyByUsername_ShouldTransferSuccessfully() {
+
+    User sender = new User();
+    sender.setId(1L);
+    sender.setUsername("john");
+    sender.setBalance(1000.0);
+
+    User receiver = new User();
+    receiver.setId(2L);
+    receiver.setUsername("alice");
+    receiver.setBalance(500.0);
+
+    when(userRepository.findByUsername("john"))
+            .thenReturn(Optional.of(sender));
+
+    when(userRepository.findById(1L))
+            .thenReturn(Optional.of(sender));
+
+    when(userRepository.findById(2L))
+            .thenReturn(Optional.of(receiver));
+
+    String result =
+            userService.transferMoneyByUsername(
+                    "john",
+                    2L,
+                    200.0);
+
+    assertEquals(
+            "Transfer successful",
+            result);
+}
+
+@Test
+void getUserTransactions_ShouldReturnTransactions() {
+
+    Transaction transaction =
+            new Transaction();
+
+    Page<Transaction> page =
+            new PageImpl<>(
+                    List.of(transaction));
+
+    when(transactionRepository
+            .findByFromUserIdOrToUserIdAndTimestampBetween(
+                    anyLong(),
+                    anyLong(),
+                    any(),
+                    any(),
+                    any()))
+            .thenReturn(page);
+
+    Page<Transaction> result =
+            userService.getUserTransactions(
+                    1L,
+                    0,
+                    10);
+
+    assertEquals(
+            1,
+            result.getContent().size());
+}
+
+@Test
+void getTransactionsByType_ShouldFilterTransactions() {
+
+    Transaction debit =
+            new Transaction();
+    debit.setType(
+            TransactionType.DEBIT);
+
+    Transaction credit =
+            new Transaction();
+    credit.setType(
+            TransactionType.CREDIT);
+
+    Page<Transaction> page =
+            new PageImpl<>(
+                    List.of(
+                            debit,
+                            credit));
+
+    when(transactionRepository
+            .findByFromUserIdOrToUserIdAndTimestampBetween(
+                    anyLong(),
+                    anyLong(),
+                    any(),
+                    any(),
+                    any()))
+            .thenReturn(page);
+
+    Page<Transaction> result =
+            userService.getTransactionsByType(
+                    1L,
+                    TransactionType.DEBIT,
+                    0,
+                    10);
+
+    assertEquals(
+            1,
+            result.getContent().size());
+
+    assertEquals(
+            TransactionType.DEBIT,
+            result.getContent()
+                  .get(0)
+                  .getType());
+        }
 
 
 }
