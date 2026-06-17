@@ -8,6 +8,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -36,6 +37,10 @@ public class Transaction {
         this.timestamp = LocalDateTime.now();
         this.status = TransactionStatus.SUCCESS; // default
     }
+    @PrePersist
+    protected void onCreate() {
+        this.timestamp = LocalDateTime.now();
+    }
 
     public Long getId() { return id; }
 
@@ -58,4 +63,6 @@ public class Transaction {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    
 }

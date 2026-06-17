@@ -1,6 +1,10 @@
 package com.krupa.finsightai.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -15,14 +19,21 @@ public class User {
     private Long id;
 
     private String name;
+
+    private String username;
+
     private String email;
 
     private Double balance = 0.0;
 
-    // ✅ Default constructor
-    public User() {}
+    @JsonIgnore
+    private String password;
 
-    // ✅ Getters and Setters
+    @Enumerated(EnumType.STRING)
+    private Role role = Role.USER;
+
+    public User() {
+    }
 
     public Long getId() {
         return id;
@@ -40,6 +51,14 @@ public class User {
         this.name = name;
     }
 
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -48,12 +67,27 @@ public class User {
         this.email = email;
     }
 
-    // ⭐ IMPORTANT (this was missing)
     public Double getBalance() {
         return balance;
     }
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
