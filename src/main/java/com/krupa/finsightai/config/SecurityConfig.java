@@ -49,6 +49,8 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/v3/api-docs"
                 ).permitAll()
+                .requestMatchers("/insights/**")
+.permitAll()
 
                 // USER + ADMIN ACCESS
                 .requestMatchers("/users/me")

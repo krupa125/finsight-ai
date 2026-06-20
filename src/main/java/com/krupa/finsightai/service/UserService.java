@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.krupa.finsightai.exception.ResourceNotFoundException;
 import com.krupa.finsightai.model.Role;
 import com.krupa.finsightai.model.Transaction;
+import com.krupa.finsightai.model.TransactionCategory;
 import com.krupa.finsightai.model.TransactionStatus;
 import com.krupa.finsightai.model.TransactionType;
 import com.krupa.finsightai.model.User;
@@ -138,20 +139,22 @@ public class UserService {
         userRepository.save(receiver);
 
         Transaction debitTransaction = new Transaction();
-        debitTransaction.setFromUserId(sender.getId());
-        debitTransaction.setToUserId(receiver.getId());
-        debitTransaction.setAmount(amount);
-        debitTransaction.setType(TransactionType.DEBIT);
-        debitTransaction.setStatus(TransactionStatus.SUCCESS);
-        debitTransaction.setDescription("Money sent to " + receiver.getUsername());
+debitTransaction.setFromUserId(sender.getId());
+debitTransaction.setToUserId(receiver.getId());
+debitTransaction.setAmount(amount);
+debitTransaction.setType(TransactionType.DEBIT);
+debitTransaction.setStatus(TransactionStatus.SUCCESS);
+debitTransaction.setDescription("Money sent to " + receiver.getUsername());
+debitTransaction.setCategory(TransactionCategory.OTHER);
 
-        Transaction creditTransaction = new Transaction();
-        creditTransaction.setFromUserId(sender.getId());
-        creditTransaction.setToUserId(receiver.getId());
-        creditTransaction.setAmount(amount);
-        creditTransaction.setType(TransactionType.CREDIT);
-        creditTransaction.setStatus(TransactionStatus.SUCCESS);
-        creditTransaction.setDescription("Money received from " + sender.getUsername());
+       Transaction creditTransaction = new Transaction();
+creditTransaction.setFromUserId(sender.getId());
+creditTransaction.setToUserId(receiver.getId());
+creditTransaction.setAmount(amount);
+creditTransaction.setType(TransactionType.CREDIT);
+creditTransaction.setStatus(TransactionStatus.SUCCESS);
+creditTransaction.setDescription("Money received from " + sender.getUsername());
+creditTransaction.setCategory(TransactionCategory.OTHER);
 
         transactionRepository.save(debitTransaction);
         transactionRepository.save(creditTransaction);

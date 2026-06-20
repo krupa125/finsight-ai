@@ -31,38 +31,83 @@ public class Transaction {
     @Enumerated(EnumType.STRING)
     private TransactionStatus status; // SUCCESS / FAILED
 
+    @Enumerated(EnumType.STRING)
+    private TransactionCategory category; // FOOD, SHOPPING, etc.
+
     private String description;
 
     public Transaction() {
         this.timestamp = LocalDateTime.now();
-        this.status = TransactionStatus.SUCCESS; // default
+        this.status = TransactionStatus.SUCCESS;
+        this.category = TransactionCategory.OTHER;
     }
+
     @PrePersist
     protected void onCreate() {
         this.timestamp = LocalDateTime.now();
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
-    public Long getFromUserId() { return fromUserId; }
-    public void setFromUserId(Long fromUserId) { this.fromUserId = fromUserId; }
+    public Long getFromUserId() {
+        return fromUserId;
+    }
 
-    public Long getToUserId() { return toUserId; }
-    public void setToUserId(Long toUserId) { this.toUserId = toUserId; }
+    public void setFromUserId(Long fromUserId) {
+        this.fromUserId = fromUserId;
+    }
 
-    public Double getAmount() { return amount; }
-    public void setAmount(Double amount) { this.amount = amount; }
+    public Long getToUserId() {
+        return toUserId;
+    }
 
-    public LocalDateTime getTimestamp() { return timestamp; }
+    public void setToUserId(Long toUserId) {
+        this.toUserId = toUserId;
+    }
 
-    public TransactionType getType() { return type; }
-    public void setType(TransactionType type) { this.type = type; }
+    public Double getAmount() {
+        return amount;
+    }
 
-    public TransactionStatus getStatus() { return status; }
-    public void setStatus(TransactionStatus status) { this.status = status; }
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 
-    
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
+    }
+
+    public TransactionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(TransactionStatus status) {
+        this.status = status;
+    }
+
+    public TransactionCategory getCategory() {
+        return category;
+    }
+
+    public void setCategory(TransactionCategory category) {
+        this.category = category;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }
