@@ -1,4 +1,12 @@
 import { useEffect, useState } from "react";
+import DashboardCard from "../components/DashboardCard";
+import {
+  FaArrowDown,
+  FaArrowUp,
+  FaPiggyBank,
+  FaWallet,
+} from "react-icons/fa";
+
 import {
   getDashboardData,
   getCategoryBreakdown,
@@ -35,20 +43,42 @@ export default function Dashboard() {
   }, []);
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>FinSight AI Dashboard</h1>
+  <div className="p-8 bg-slate-100 min-h-screen">
+    <h1 className="text-4xl font-bold mb-8">
+      FinSight AI Dashboard
+    </h1>
 
-      <h2>Dashboard Summary</h2>
-      <pre>{JSON.stringify(dashboard, null, 2)}</pre>
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
-      <h2>Category Breakdown</h2>
-      <pre>{JSON.stringify(categories, null, 2)}</pre>
+      <DashboardCard
+        title="Income"
+        value={dashboard?.income || 0}
+        icon={<FaArrowDown />}
+        color="linear-gradient(135deg,#10B981,#059669)"
+      />
 
-      <h2>Monthly Insights</h2>
-      <pre>{JSON.stringify(monthly, null, 2)}</pre>
+      <DashboardCard
+        title="Expenses"
+        value={dashboard?.expenses || 0}
+        icon={<FaArrowUp />}
+        color="linear-gradient(135deg,#EF4444,#DC2626)"
+      />
 
-      <h2>Transaction History</h2>
-      <pre>{JSON.stringify(transactions, null, 2)}</pre>
+      <DashboardCard
+        title="Savings"
+        value={dashboard?.savings || 0}
+        icon={<FaPiggyBank />}
+        color="linear-gradient(135deg,#3B82F6,#2563EB)"
+      />
+
+      <DashboardCard
+        title="Balance"
+        value={(dashboard?.income || 0) - (dashboard?.expenses || 0)}
+        icon={<FaWallet />}
+        color="linear-gradient(135deg,#8B5CF6,#6D28D9)"
+      />
+
     </div>
-  );
+  </div>
+);
 }

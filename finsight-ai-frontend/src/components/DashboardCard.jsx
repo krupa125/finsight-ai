@@ -1,34 +1,36 @@
+import { motion } from "framer-motion";
+
 export default function DashboardCard({
   title,
-  amount,
-  change,
-  gradient,
+  value,
+  icon,
+  color,
 }) {
   return (
-    <div
-      className={`
-        ${gradient}
-        text-white
-        rounded-3xl
-        p-6
-        shadow-lg
-        transition-all
-        duration-300
-        hover:scale-105
-        hover:shadow-2xl
-      `}
+    <motion.div
+      initial={{ opacity: 0, y: 25 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{
+        scale: 1.03,
+        transition: { duration: 0.2 },
+      }}
+      className="rounded-2xl p-6 shadow-lg text-white"
+      style={{ background: color }}
     >
-      <h3 className="text-lg font-semibold opacity-90">
-        {title}
-      </h3>
+      <div className="flex justify-between items-center">
+        <div>
+          <p className="text-sm opacity-80">{title}</p>
 
-      <p className="text-4xl font-bold mt-4">
-        ₹{amount}
-      </p>
+          <h2 className="text-3xl font-bold mt-2">
+            ₹{value?.toLocaleString()}
+          </h2>
+        </div>
 
-      <p className="mt-3 text-sm opacity-80">
-        {change}
-      </p>
-    </div>
+        <div className="text-4xl">
+          {icon}
+        </div>
+      </div>
+    </motion.div>
   );
 }
