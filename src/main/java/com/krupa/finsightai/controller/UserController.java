@@ -98,20 +98,25 @@ public class UserController {
     }
 
     // OWN TRANSACTIONS
-    @GetMapping("/transactions")
-    public Page<Transaction> getUserTransactions(
-            Principal principal,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+    // OWN TRANSACTIONS
+@GetMapping("/transactions")
+public Page<Transaction> getUserTransactions(
+        Principal principal,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "5") int size) {
 
-        User user = userService.getUserByUsername(principal.getName());
+    System.out.println("Principal username: " + principal.getName());
 
-        return userService.getUserTransactions(
-                user.getId(),
-                page,
-                size
-        );
-    }
+    User user = userService.getUserByUsername(principal.getName());
+
+    System.out.println("User ID: " + user.getId());
+
+    return userService.getUserTransactions(
+            user.getId(),
+            page,
+            size
+    );
+}
 
     // OWN FILTERED TRANSACTIONS
     @GetMapping("/transactions/filter")
@@ -130,4 +135,18 @@ public class UserController {
                 size
         );
     }
+    @GetMapping("/history/{userId}")
+    public Page<Transaction> getHistory(
+        @PathVariable Long userId,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size) {
+
+    return userService.getUserTransactions(
+            userId,
+            page,
+            size
+    );
+}
+    
+
 }

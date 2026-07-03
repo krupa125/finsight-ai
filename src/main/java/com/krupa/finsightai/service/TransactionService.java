@@ -59,12 +59,11 @@ public class TransactionService {
         }
 
         return transactionRepository
-                .findByFromUserIdOrToUserIdAndTimestampBetween(
-                        currentUser.getId(),
-                        currentUser.getId(),
-                        start,
-                        end,
-                        pageable
-                );
+        .findUserTransactions(
+                currentUser.getId(),
+                start,
+                end,
+                pageable
+        );
     }
 }

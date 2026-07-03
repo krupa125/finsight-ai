@@ -19,11 +19,16 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             Pageable pageable
     );
 
-    Page<Transaction> findByFromUserIdOrToUserIdAndTimestampBetween(
-            Long fromUserId,
-            Long toUserId,
-            LocalDateTime start,
-            LocalDateTime end,
+    @Query("""
+        SELECT t
+        FROM Transaction t
+        WHERE (t.fromUserId = :userId OR t.toUserId = :userId)
+        AND t.timestamp BETWEEN :startDate AND :endDate
+    """)
+    Page<Transaction> findUserTransactions(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
             Pageable pageable
     );
 
@@ -39,4 +44,8 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate
     );
+   
+
+    Page<Transaction> findByFromUserIdOrToUserIdAndTimestampBetween(Long id, Long id2, LocalDateTime start,
+            LocalDateTime end, Pageable pageable);
 }

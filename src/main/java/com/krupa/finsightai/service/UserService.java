@@ -139,22 +139,22 @@ public class UserService {
         userRepository.save(receiver);
 
         Transaction debitTransaction = new Transaction();
-debitTransaction.setFromUserId(sender.getId());
-debitTransaction.setToUserId(receiver.getId());
-debitTransaction.setAmount(amount);
-debitTransaction.setType(TransactionType.DEBIT);
-debitTransaction.setStatus(TransactionStatus.SUCCESS);
-debitTransaction.setDescription("Money sent to " + receiver.getUsername());
-debitTransaction.setCategory(TransactionCategory.OTHER);
+        debitTransaction.setFromUserId(sender.getId());
+        debitTransaction.setToUserId(receiver.getId());
+        debitTransaction.setAmount(amount);
+        debitTransaction.setType(TransactionType.DEBIT);
+        debitTransaction.setStatus(TransactionStatus.SUCCESS);
+        debitTransaction.setDescription("Money sent to " + receiver.getUsername());
+        debitTransaction.setCategory(TransactionCategory.OTHER);
 
        Transaction creditTransaction = new Transaction();
-creditTransaction.setFromUserId(sender.getId());
-creditTransaction.setToUserId(receiver.getId());
-creditTransaction.setAmount(amount);
-creditTransaction.setType(TransactionType.CREDIT);
-creditTransaction.setStatus(TransactionStatus.SUCCESS);
-creditTransaction.setDescription("Money received from " + sender.getUsername());
-creditTransaction.setCategory(TransactionCategory.OTHER);
+        creditTransaction.setFromUserId(sender.getId());
+        creditTransaction.setToUserId(receiver.getId());
+        creditTransaction.setAmount(amount);
+        creditTransaction.setType(TransactionType.CREDIT);
+        creditTransaction.setStatus(TransactionStatus.SUCCESS);
+        creditTransaction.setDescription("Money received from " + sender.getUsername());
+        creditTransaction.setCategory(TransactionCategory.OTHER);
 
         transactionRepository.save(debitTransaction);
         transactionRepository.save(creditTransaction);
@@ -170,29 +170,28 @@ creditTransaction.setCategory(TransactionCategory.OTHER);
         return transferMoney(sender.getId(), receiverId, amount);
     }
 
-    public Page<Transaction> getUserTransactions(Long userId, int page, int size) {
-        return transactionRepository.findByFromUserIdOrToUserIdAndTimestampBetween(
-                userId,
-                userId,
-                LocalDateTime.of(2000, 1, 1, 0, 0),
-                LocalDateTime.now(),
-                PageRequest.of(page, size)
-        );
-    }
+   public Page<Transaction> getUserTransactions(Long userId, int page, int size) {
+    return transactionRepository.findUserTransactions(
+            userId,
+            LocalDateTime.of(2000, 1, 1, 0, 0),
+            LocalDateTime.now(),
+            PageRequest.of(page, size)
+    );
+}
+
 
     public Page<Transaction> getTransactionsByType(Long userId,
                                                    TransactionType type,
                                                    int page,
                                                    int size) {
 
-        Page<Transaction> transactions =
-                transactionRepository.findByFromUserIdOrToUserIdAndTimestampBetween(
-                        userId,
-                        userId,
-                        LocalDateTime.of(2000, 1, 1, 0, 0),
-                        LocalDateTime.now(),
-                        PageRequest.of(page, size)
-                );
+       Page<Transaction> transactions =
+        transactionRepository.findUserTransactions(
+                userId,
+                LocalDateTime.of(2000, 1, 1, 0, 0),
+                LocalDateTime.now(),
+                PageRequest.of(page, size)
+        );
 
         return new PageImpl<>(
                 transactions.getContent()
@@ -203,4 +202,6 @@ creditTransaction.setCategory(TransactionCategory.OTHER);
                 transactions.getContent().size()
         );
     }
+    
+    
 }

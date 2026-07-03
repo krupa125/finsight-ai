@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# React Frontend
+finsight-ai-frontend/node_modules/
+finsight-ai-frontend/dist/
+
+# Node.js
+node_modules/
+dist/
+package-lock.json
+npm-debug.log*

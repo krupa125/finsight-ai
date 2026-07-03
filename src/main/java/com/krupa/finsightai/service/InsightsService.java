@@ -28,38 +28,37 @@ public class InsightsService {
 
     public InsightsResponse getMonthlyInsights(Long userId) {
 
-        List<Transaction> transactions =
-                transactionRepository
-                        .findByFromUserIdOrToUserIdAndTimestampBetween(
-                                userId,
-                                userId,
-                                LocalDateTime.now().withDayOfMonth(1).toLocalDate().atStartOfDay(),
-                                LocalDateTime.now(),
-                                org.springframework.data.domain.PageRequest.of(0, 1000)
-                        )
-                        .getContent();
+    List<Transaction> transactions =
+            transactionRepository
+                    .findUserTransactions(
+                            userId,
+                            LocalDateTime.of(2000, 1, 1, 0, 0),
+                            LocalDateTime.now(),
+                            org.springframework.data.domain.PageRequest.of(0, 1000)
+                    )
+                    .getContent();
 
-        double income = transactions.stream()
-                .filter(t -> t.getType() == TransactionType.CREDIT)
-                .mapToDouble(Transaction::getAmount)
-                .sum();
+    double income = transactions.stream()
+            .filter(t -> t.getType() == TransactionType.CREDIT)
+            .mapToDouble(Transaction::getAmount)
+            .sum();
 
-        double expenses = transactions.stream()
-                .filter(t -> t.getType() == TransactionType.DEBIT)
-                .mapToDouble(Transaction::getAmount)
-                .sum();
+    double expenses = transactions.stream()
+            .filter(t -> t.getType() == TransactionType.DEBIT)
+            .mapToDouble(Transaction::getAmount)
+            .sum();
 
-        double savings = income - expenses;
+    double savings = income - expenses;
 
-        long totalTransactions = transactions.size();
+    long totalTransactions = transactions.size();
 
-        return new InsightsResponse(
-                income,
-                expenses,
-                savings,
-                totalTransactions
-        );
-    }
+    return new InsightsResponse(
+            income,
+            expenses,
+            savings,
+            totalTransactions
+    );
+}
     public Map<TransactionCategory, Double> getCategoryBreakdown(Long userId) {
 
     LocalDateTime startDate =

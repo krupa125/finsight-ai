@@ -30,6 +30,7 @@ public class SecurityConfig {
     ) throws Exception {
 
         http
+            .cors(cors -> {})
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
 
@@ -49,8 +50,13 @@ public class SecurityConfig {
                         "/v3/api-docs/**",
                         "/v3/api-docs"
                 ).permitAll()
+
+                // INSIGHTS
                 .requestMatchers("/insights/**")
-.permitAll()
+                .permitAll()
+                // CATEGORY
+                .requestMatchers("/categories/**")
+                .permitAll()
 
                 // USER + ADMIN ACCESS
                 .requestMatchers("/users/me")
@@ -64,6 +70,8 @@ public class SecurityConfig {
 
                 .requestMatchers("/users/transactions/**")
                 .hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/users/history/**")
+                .permitAll()
 
                 // ADMIN ONLY
                 .requestMatchers("/users")
@@ -72,7 +80,7 @@ public class SecurityConfig {
                 .requestMatchers("/users/*")
                 .hasRole("ADMIN")
 
-                // EVERYTHING ELSE REQUIRES AUTHENTICATION
+                // EVERYTHING ELSE
                 .anyRequest()
                 .authenticated()
             )
