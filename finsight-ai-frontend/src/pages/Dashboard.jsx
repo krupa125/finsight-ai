@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import DashboardCard from "../components/DashboardCard";
+import SpendingPieChart from "../components/SpendingPieChart";
 import {
   FaArrowDown,
   FaArrowUp,
@@ -14,7 +15,7 @@ import {
   getTransactionHistory,
 } from "../services/api";
 
-const USER_ID = 17; // Change if you're using a different user
+const USER_ID = 19; // Change if you're using a different user
 
 export default function Dashboard() {
   const [dashboard, setDashboard] = useState(null);
@@ -48,6 +49,7 @@ export default function Dashboard() {
       FinSight AI Dashboard
     </h1>
 
+    {/* Dashboard Cards */}
     <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
 
       <DashboardCard
@@ -79,6 +81,12 @@ export default function Dashboard() {
       />
 
     </div>
+
+    {/* Spending Pie Chart */}
+    <div className="mt-8">
+      <SpendingPieChart categories={categories} />
+    </div>
+
   </div>
 );
 }
