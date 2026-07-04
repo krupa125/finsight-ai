@@ -9,29 +9,45 @@ export default function PremiumCard({
 }) {
   return (
     <motion.div
-      whileHover={{ y: -6, scale: 1.02 }}
-      transition={{ duration: 0.25 }}
-      className="bg-white rounded-3xl p-6 shadow-lg border border-slate-200"
+      whileHover={{
+        y: -8,
+        scale: 1.03,
+      }}
+      transition={{
+        duration: 0.25,
+      }}
+      className="relative overflow-hidden rounded-3xl bg-white/80 backdrop-blur-xl border border-white shadow-xl p-6"
     >
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-slate-500 text-sm">{title}</p>
+      <div
+        className={`absolute top-0 left-0 w-full h-1 ${color}`}
+      />
 
-          <h2 className="text-3xl font-bold mt-2">
+      <div className="flex justify-between items-center">
+
+        <div>
+
+          <p className="text-slate-500 text-sm font-medium">
+            {title}
+          </p>
+
+          <h2 className="text-4xl font-extrabold mt-3 text-slate-800">
             ₹ {Number(value).toLocaleString()}
           </h2>
 
-          <p className="text-green-600 mt-3 font-semibold text-sm">
-            ▲ {change}
+          <p className="mt-3 text-green-600 font-semibold">
+            {change} this month
           </p>
+
         </div>
 
         <div
-          className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white ${color}`}
+          className={`${color} w-16 h-16 rounded-2xl flex items-center justify-center text-white text-2xl shadow-lg`}
         >
           {icon}
         </div>
+
       </div>
+
     </motion.div>
   );
 }

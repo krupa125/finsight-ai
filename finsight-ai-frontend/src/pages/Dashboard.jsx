@@ -3,11 +3,9 @@ import { motion } from "framer-motion";
 
 import PremiumCard from "../components/dashboard/PremiumCard";
 import ActivityCard from "../components/dashboard/ActivityCard";
-
 import SpendingPieChart from "../components/SpendingPieChart";
 import MonthlyBarChart from "../components/MonthlyBarChart";
 import TransactionTable from "../components/TransactionTable";
-import PageHeader from "../components/PageHeader";
 
 import {
   FaArrowDown,
@@ -34,10 +32,17 @@ export default function Dashboard() {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const dashboardData = await getDashboardData(USER_ID);
-        const categoryData = await getCategoryBreakdown(USER_ID);
-        const monthlyData = await getMonthlyInsights(USER_ID);
-        const transactionData = await getTransactionHistory(USER_ID);
+        const [
+          dashboardData,
+          categoryData,
+          monthlyData,
+          transactionData,
+        ] = await Promise.all([
+          getDashboardData(USER_ID),
+          getCategoryBreakdown(USER_ID),
+          getMonthlyInsights(USER_ID),
+          getTransactionHistory(USER_ID),
+        ]);
 
         setDashboard(dashboardData);
         setCategories(categoryData);
@@ -51,117 +56,144 @@ export default function Dashboard() {
     loadData();
   }, []);
 
+  const hour = new Date().getHours();
+
+  const greeting =
+    hour < 12
+      ? "Good Morning"
+      : hour < 17
+      ? "Good Afternoon"
+      : "Good Evening";
+
+  if (!dashboard) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+
+          <p className="mt-5 text-slate-600 text-lg font-medium">
+            Loading FinSight AI...
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-slate-100 p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-50 to-blue-100">
+      <div className="max-w-7xl mx-auto p-8">
 
-      <PageHeader
-        title="Dashboard"
-        subtitle="Welcome back! Here's your financial overview."
-      />
+        {/* Hero */}
 
-      {/* Premium Cards */}
+        <motion.div
+          initial={{ opacity: 0, y: -15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12"
+        >
+          <p className="text-blue-600 font-semibold uppercase tracking-[0.2em]">
+            FinSight AI
+          </p>
 
-      <motion.div
-        initial={{ opacity: 0, y: 25 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mt-6"
-      >
-        <PremiumCard
-          title="Income"
-          value={dashboard?.income || 0}
-          icon={<FaArrowDown size={26} />}
-          color="bg-green-500"
-          change="+12%"
-        />
+          <h1 className="text-5xl md:text-6xl font-extrabold text-slate-800 mt-2">
+            {greeting} 👋
+          </h1>
 
-        <PremiumCard
-          title="Expenses"
-          value={dashboard?.expenses || 0}
-          icon={<FaArrowUp size={26} />}
-          color="bg-red-500"
-          change="-5%"
-        />
+          <p className="text-slate-500 mt-3 text-lg">
+            Here's your financial overview for today.
+          </p>
+        </motion.div>
 
-        <PremiumCard
-          title="Savings"
-          value={dashboard?.savings || 0}
-          icon={<FaPiggyBank size={26} />}
-          color="bg-blue-500"
-          change="+18%"
-        />
+        {/* KPI Cards */}
 
-        <PremiumCard
-          title="Balance"
-          value={(dashboard?.income || 0) - (dashboard?.expenses || 0)}
-          icon={<FaWallet size={26} />}
-          color="bg-purple-500"
-          change="+8%"
-        />
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 25 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.6,
+            ease: "easeOut",
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6"
+        >
+          <PremiumCard
+            title="Income"
+            value={dashboard.income}
+            icon={<FaArrowDown size={26} />}
+            color="bg-gradient-to-r from-green-500 to-emerald-600"
+            change="+12%"
+          />
 
-      {/* Activity */}
+          <PremiumCard
+            title="Expenses"
+            value={dashboard.expenses}
+            icon={<FaArrowUp size={26} />}
+            color="bg-gradient-to-r from-red-500 to-pink-600"
+            change="-5%"
+          />
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2 }}
-        className="mt-8"
-      >
-        <ActivityCard
-          income={dashboard?.income || 0}
-          expenses={dashboard?.expenses || 0}
-          savings={dashboard?.savings || 0}
-        />
-      </motion.div>
+          <PremiumCard
+            title="Savings"
+            value={dashboard.savings}
+            icon={<FaPiggyBank size={26} />}
+            color="bg-gradient-to-r from-blue-500 to-cyan-600"
+            change="+18%"
+          />
 
-      {/* Charts */}
+          <PremiumCard
+            title="Balance"
+            value={dashboard.income - dashboard.expenses}
+            icon={<FaWallet size={26} />}
+            color="bg-gradient-to-r from-purple-500 to-indigo-600"
+            change="+8%"
+          />
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4 }}
-        className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8"
-      >
-        <div className="bg-white rounded-3xl shadow-lg p-6">
+        {/* Financial Health */}
 
-          <h2 className="text-xl font-bold mb-4">
-            Spending Breakdown
-          </h2>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="mt-8"
+        >
+          <ActivityCard
+            income={dashboard.income}
+            expenses={dashboard.expenses}
+            savings={dashboard.savings}
+          />
+        </motion.div>
 
+        {/* Charts */}
+
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.4 }}
+          className="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-8"
+        >
           <SpendingPieChart categories={categories} />
 
-        </div>
-
-        <div className="bg-white rounded-3xl shadow-lg p-6">
-
-          <h2 className="text-xl font-bold mb-4">
-            Monthly Overview
-          </h2>
-
           <MonthlyBarChart monthly={monthly} />
+        </motion.div>
 
-        </div>
+        {/* Transactions */}
 
-      </motion.div>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+          className="mt-8"
+        >
+          <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl border border-white p-6">
+            <h2 className="text-2xl font-bold text-slate-800 mb-6">
+              Recent Transactions
+            </h2>
 
-      {/* Transactions */}
+            <TransactionTable transactions={transactions} />
+          </div>
+        </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
-        className="bg-white rounded-3xl shadow-lg p-6 mt-8"
-      >
-
-        <h2 className="text-xl font-bold mb-4">
-          Recent Transactions
-        </h2>
-
-        <TransactionTable transactions={transactions} />
-
-      </motion.div>
-
+      </div>
     </div>
   );
 }
