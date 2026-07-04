@@ -1,5 +1,3 @@
-import { motion } from "framer-motion";
-
 export default function DashboardCard({
   title,
   value,
@@ -7,30 +5,44 @@ export default function DashboardCard({
   color,
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 25 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      whileHover={{
-        scale: 1.03,
-        transition: { duration: 0.2 },
+    <div
+      className="rounded-3xl shadow-xl text-white p-6 transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl"
+      style={{
+        background: color,
       }}
-      className="rounded-2xl p-6 shadow-lg text-white"
-      style={{ background: color }}
     >
-      <div className="flex justify-between items-center">
-        <div>
-          <p className="text-sm opacity-80">{title}</p>
+      <div className="flex justify-between items-start">
 
-          <h2 className="text-3xl font-bold mt-2">
-            ₹{value?.toLocaleString()}
+        <div>
+
+          <p className="text-white/80 text-sm uppercase tracking-wider">
+            {title}
+          </p>
+
+          <h2 className="text-4xl font-bold mt-4">
+            ₹ {Number(value || 0).toLocaleString("en-IN")}
           </h2>
+
         </div>
 
-        <div className="text-4xl">
+        <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-3xl">
           {icon}
         </div>
+
       </div>
-    </motion.div>
+
+      <div className="mt-8 flex justify-between items-center">
+
+        <span className="text-white/80 text-sm">
+          Live Financial Data
+        </span>
+
+        <span className="font-semibold text-green-200">
+          ● Live
+        </span>
+
+      </div>
+
+    </div>
   );
 }
